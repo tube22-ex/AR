@@ -1,48 +1,36 @@
 const video = document.getElementById('video');
-const startBtn = document.getElementById('startBtn');
-const switchBtn = document.getElementById('switchBtn');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const constraints = {
+    video: { facingMode: 'environment' },
+    audio: false
+  };
 
-let currentStream;
+navigator.mediaDevices.getUserMedia(constraints)
+    .then((stream) => {
+        video.srcObject = stream;
+        let videoW = 0;
+        video.addEventListener('loadedmetadata', () => {
+          canvas.height = video.videoHeight;
+          videoW = video.videoWidth;
+          canvas.width = videoW * 2; 
+        });
 
-startBtn.addEventListener('click', startCamera);
-switchBtn.addEventListener('click', switchCamera);
+        video.addEventListener('play', () => {
+          const draw = () => {
+            if (video.paused || video.ended) {
+              return;
+            }
+            ctx.drawImage(video, 0, 0, videoW, canvas.height);
+            ctx.drawImage(video, videoW + 1, 0, videoW, canvas.height);
 
-async function startCamera() {
-    const constraints = {
-      video: { facingMode: 'environment' },
-      audio: false
-    };
+            requestAnimationFrame(draw);
+          };
 
-    const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    video.srcObject = stream;
-    currentStream = stream;
-}
-
-async function switchCamera() {
-  if (currentStream) {
-    currentStream.getTracks().forEach(track => track.stop());
-  }
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const videoDevices = devices.filter(device => device.kind === 'videoinput');
-
-    if (videoDevices.length > 1) {
-      const currentDeviceId = currentStream.getVideoTracks()[0].getSettings().deviceId;
-      const nextDevice = videoDevices.find(device => device.deviceId !== currentDeviceId);
-
-      const constraints = {
-        video: { deviceId: { exact: nextDevice.deviceId } },
-        audio: false
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      video.srcObject = stream;
-      currentStream = stream;
-    } 
-
-}
-
-
+          draw();
+        });
+      })
+/*
 let tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 let firstScriptTag = document.getElementsByTagName('script')[0];
@@ -83,3 +71,4 @@ function video_set(videoID){
     player.cueVideoById(videoID);
 }
 
+*/

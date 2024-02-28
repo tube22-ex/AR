@@ -1,27 +1,6 @@
 #videoArea{
-    position: relative;
-    width: 100vw;
+    display: none;
+}
+canvas{
     height: 100vh;
-}
-.videoElement{
-    position: absolute;
-    width: 100%; /* 親要素の幅いっぱいに広げる */
-    height: 100%; /* 親要素の高さいっぱいに広げる */
-    top: 0;
-    left: 0;
-}
-
-#video{
-    z-index:1;
-}
-
-#player{
-    margin: 3em;
-}
-#playerParent{
-    display: flex;
-    justify-content: center;
-    z-index: 2;
-    opacity: 0.5;
-    top: 15%;
 }
