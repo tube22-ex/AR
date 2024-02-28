@@ -9,7 +9,6 @@ const constraints = {
     video: { 
       facingMode: 'environment',
       frameRate: 60,
-      zoom: 2  // 2倍のズーム
     },
     audio: false
   };
@@ -17,14 +16,30 @@ const constraints = {
 function media(){
   navigator.mediaDevices.getUserMedia(constraints)
       .then((stream) => {
-          video.srcObject = stream;
-          video.addEventListener('loadedmetadata', () => {
-            canvas.height = video.videoHeight;
-            videoW = video.videoWidth;
-            canvas.width = videoW * 2; 
-          });
+        const videoTrack = stream.getVideoTracks()[0];
 
-          video.addEventListener('play',videodraw);
+        const constraints = {
+          width: {
+            ideal: 3840,     // 希望する幅
+            min: 1920        // 最小値として指定
+          },
+          height: {
+            ideal: 2160,      // 希望する高さ
+            min: 1080         // 最小値として指定
+          }
+        };
+    
+        videoTrack.applyConstraints(constraints)
+          .then(() => {
+            video.srcObject = stream;
+
+            video.addEventListener('loadedmetadata', () => {
+              canvas.height = video.videoHeight;
+              videoW = video.videoWidth;
+              canvas.width = videoW * 2; 
+            });
+            video.addEventListener('play',videodraw);
+          })
   })
 }
 
@@ -84,7 +99,7 @@ document.getElementById('btn').onclick = () => {
   const mediaConnection = peer.call(ID, localStream);
     setEventListener(mediaConnection);
   alert(ID + "に接続")
-  ctrlDisplayNone();
+  // ctrlDisplayNone();
 };
 
 //映像
