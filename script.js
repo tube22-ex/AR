@@ -20,11 +20,13 @@ function media(){
 
         const constraints = {
           width: {
-            ideal: 3840,     // 希望する幅
+            ideal: 1920
+            //ideal: 3840,     // 希望する幅
             min: 1920        // 最小値として指定
           },
           height: {
-            ideal: 2160,      // 希望する高さ
+            ideal : 1080
+            //ideal: 2160,      // 希望する高さ
             min: 1080         // 最小値として指定
           }
         };
