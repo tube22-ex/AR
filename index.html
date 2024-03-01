@@ -15,9 +15,14 @@
   <title>AR</title>
 </head>
 <body>
-    <canvas id="canvas" width="1920" height="1080"></canvas>
+  <div id="canvasParent">
+    <div id="canvasDiv">
+      <canvas id="canvas" width="1920" height="1080"></canvas>
+    </div>
+  </div>
     <div id="controlPanel">
       <button id="UserMediaBtn">カメラ</button>
+      <button id="displayMediaBtn">画面共有VR</button>
       <button id="btn00">画面共有</button><br>
       <input id="ID"></input>
       <button id="btn">接続</button>
@@ -25,6 +30,7 @@
       </div>
     <div id="videoArea">
         <video id="video" class="videoElement" playsinline autoplay></video>
+        <video id="video2" class="videoElement" playsinline autoplay></video>
         <video id="myV"></video>
     </div>
   <script src="script.js"></script>

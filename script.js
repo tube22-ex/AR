@@ -1,10 +1,12 @@
 const video = document.getElementById('video');
+const video2 = document.getElementById('video2')
 const canvas = document.getElementById('canvas');
 const UserMediaBtn = document.getElementById('UserMediaBtn');
 const controlPanel = document.getElementById('controlPanel');
 const ctx = canvas.getContext('2d');
 
 let videoW = 0;
+let videoN = 0;
 const constraints = {
     video: { 
       facingMode: 'environment',
@@ -13,60 +15,100 @@ const constraints = {
     audio: false
   };
 
-function media(){
-  navigator.mediaDevices.getUserMedia(constraints)
-      .then((stream) => {
-        const videoTrack = stream.getVideoTracks()[0];
+function media(mode){
+  if(mode === 'camera'){
+    videoN = 0
+      navigator.mediaDevices.getUserMedia(constraints).then(streamFunc)
+  }
+  else if(mode === 'displayMedia'){
+    videoN = 1
+    navigator.mediaDevices.getDisplayMedia(constraints).then(streamFunc);
+  }
 
-        const constraints = {
-          width: {
-            ideal: 1920,
-            //ideal: 3840,     // 希望する幅
-            min: 1920        // 最小値として指定
-          },
-          height: {
-            ideal : 1080,
-            //ideal: 2160,      // 希望する高さ
-            min: 1080         // 最小値として指定
-          }
-        };
-    
-        videoTrack.applyConstraints(constraints)
-          .then(() => {
-            video.srcObject = stream;
-
-            video.addEventListener('loadedmetadata', () => {
-              canvas.height = video.videoHeight;
-              videoW = video.videoWidth;
-              canvas.width = videoW * 2; 
-            });
-            video.addEventListener('play',videodraw);
-          })
-  })
 }
 
+function streamFunc(stream){
+  const videoTrack = stream.getVideoTracks()[0];
+
+  const constraints = {
+    width: {
+      ideal: 1920,     // 希望する幅
+      min: 1920        // 最小値として指定
+    },
+    height: {
+      ideal: 1080,      // 希望する高さ
+      min: 1080         // 最小値として指定
+    }
+  };
+
+  videoTrack.applyConstraints(constraints)
+    .then(() => {
+      let VIDEO;
+      if(videoN === 0){
+        VIDEO = video;
+      }else{
+        VIDEO = video2;
+      }
+      VIDEO.srcObject = stream;
+      VIDEO.addEventListener('play',()=>{
+      if(videoN === 0){
+        canvas.height = VIDEO.videoHeight;
+        videoW = VIDEO.videoWidth;
+        canvas.width = videoW * 2;
+        videodraw(VIDEO)
+      }else{
+        videodraw2(VIDEO)
+      }
+
+    
+    });
+    })
+}
+
+
 UserMediaBtn.addEventListener('click',()=>{
+  media('camera');
+})
+
+displayMediaBtn.addEventListener('click',()=>{
   ctrlDisplayNone();
-  media();
+  media('displayMedia');
 })
 
 function ctrlDisplayNone(){
   controlPanel.style.display = 'none';
 }
 
-function videodraw(){
+function videodraw(VIDEO){
   const draw = () => {
-    if (video.paused || video.ended) {
+    if (VIDEO.paused || VIDEO.ended) {
       return;
     }
-    ctx.drawImage(video, 0, 0, videoW, canvas.height);
-    ctx.drawImage(video, videoW + 1, 0, videoW, canvas.height);
+    ctx.drawImage(VIDEO, 0, 0, videoW, canvas.height);
+    ctx.drawImage(VIDEO, videoW, 0, videoW, canvas.height);
 
     requestAnimationFrame(draw);
   };
 
   draw();
 }
+
+function videodraw2(VIDEO){
+  let newVideoW = videoW / 2;
+  let newHeight = canvas.height / 2;
+  const draw = () => {
+    if (VIDEO.paused || VIDEO.ended) {
+      return;
+    }
+    ctx.drawImage(VIDEO, newVideoW / 2, newHeight /2, newVideoW, newHeight);
+    ctx.drawImage(VIDEO, (newVideoW * 2) + (newVideoW / 2), newHeight / 2, newVideoW, newHeight);
+
+    requestAnimationFrame(draw);
+  };
+
+  draw();
+}
+
 
 let localStream;
 const st_option = {
@@ -108,14 +150,24 @@ document.getElementById('btn').onclick = () => {
   // 相手側のやつ
   const setEventListener = mediaConnection => {
     mediaConnection.on('stream', stream => {
-      video.srcObject = stream;
-      video.play();
-      video.addEventListener('loadedmetadata', () => {
-        canvas.height = video.videoHeight;
-        videoW = video.videoWidth;
-        canvas.width = videoW * 2; 
-        console.log(canvas.height,videoW,canvas.width)
-        videodraw()
+      const videoTrack = stream.getVideoTracks()[0];
+      const constraints = {
+        width: {
+          ideal: 1280,     // 希望する幅
+          min: 1920        // 最小値として指定
+        },
+        height: {
+          ideal: 720,      // 希望する高さ
+          min: 1080         // 最小値として指定
+        }
+      };
+  
+      videoTrack.applyConstraints(constraints)
+      video2.srcObject = stream;
+      video2.play();
+      video2.addEventListener('play',()=>{
+        videodraw2(video2)
+
       });
 
     });
