@@ -153,11 +153,11 @@ document.getElementById('btn').onclick = () => {
       const videoTrack = stream.getVideoTracks()[0];
       const constraints = {
         width: {
-          ideal: 1280,     // 希望する幅
+          ideal: 1920,     // 希望する幅
           min: 1920        // 最小値として指定
         },
         height: {
-          ideal: 720,      // 希望する高さ
+          ideal: 1080,      // 希望する高さ
           min: 1080         // 最小値として指定
         }
       };
