@@ -85,23 +85,28 @@ function videodraw(VIDEO){
       return;
     }
     ctx.drawImage(VIDEO, 0, 0, videoW, canvas.height);
-    ctx.drawImage(VIDEO, videoW, 0, videoW, canvas.height);
+    ctx.drawImage(VIDEO, videoW + 1, 0, videoW, canvas.height);
 
     requestAnimationFrame(draw);
   };
 
   draw();
 }
+let test0 = 0;
+let test1 = 0;
 
+// let test0 = videoW / 3
+// let test1 = canvas.height / 3
 function videodraw2(VIDEO){
-  let newVideoW = videoW / 2;
-  let newHeight = canvas.height / 2;
+  const rate = 1.5;
+  let newVideoW = videoW / rate;
+  let newHeight = canvas.height / rate;
   const draw = () => {
     if (VIDEO.paused || VIDEO.ended) {
       return;
     }
-    ctx.drawImage(VIDEO, newVideoW / 2, newHeight /2, newVideoW, newHeight);
-    ctx.drawImage(VIDEO, (newVideoW * 2) + (newVideoW / 2), newHeight / 2, newVideoW, newHeight);
+    ctx.drawImage(VIDEO, videoW / 6, canvas.height / 6, newVideoW, newHeight);
+    ctx.drawImage(VIDEO, videoW + (videoW / 6), canvas.height / 6, newVideoW, newHeight);
 
     requestAnimationFrame(draw);
   };
