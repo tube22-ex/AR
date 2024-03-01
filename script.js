@@ -106,7 +106,7 @@ function videodraw2(VIDEO){
     if (VIDEO.paused || VIDEO.ended) {
       return;
     }
-    ctx.globalAlpha = 0.5; // 透明度を設定（0から1の間、1が不透明）
+    ctx.globalAlpha = 0.7; // 透明度を設定（0から1の間、1が不透明）
     ctx.drawImage(VIDEO, videoW / 6, canvas.height / 6, newVideoW, newHeight);
     ctx.drawImage(VIDEO, videoW + (videoW / 6), canvas.height / 6, newVideoW, newHeight);
 
